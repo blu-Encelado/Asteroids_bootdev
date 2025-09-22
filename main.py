@@ -10,7 +10,7 @@ from asteroidfield import *
 x = SCREEN_WIDTH / 2
 y = SCREEN_HEIGHT / 2
 
-def game_loop(screen, clock, player, updatable, drawable, asteroids):
+def game_loop(screen, clock, player, updatable, drawable, asteroids, shots):
 
     dt = 0
     while True:
@@ -23,7 +23,11 @@ def game_loop(screen, clock, player, updatable, drawable, asteroids):
             if obj.collision(player):
                 print("GameOver")
                 return
-            
+            for shot in shots:
+                if shot.collision(obj):
+                    obj.split()
+                    shot.kill()
+
         screen.fill("black")
 
         for draw in drawable:
@@ -41,10 +45,12 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
 
     AsteroidField.containers =(updatable)
     Asteroid.containers = (asteroids, updatable, drawable)
     Player.containers = (updatable, drawable)
+    Shot.containers = (shots, updatable, drawable)
 
     player = Player(x, y)
     asteroid_field = AsteroidField()
@@ -53,7 +59,7 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
 
-    game_loop(screen, clock, player,updatable, drawable, asteroids)
+    game_loop(screen, clock, player, updatable, drawable, asteroids, shots)
 
 
 if __name__ == "__main__":
